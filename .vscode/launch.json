@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Searcher",
+            "request": "launch",
+            "mainClass": "com.mycompany.luceneexam.Searcher",
+            "projectName": "LuceneExam",
+            "args": "人生やめたい",
+            "env": {
+              "ENV1": "hogehoge",
+              "ENV2": "foobar",
+            },            
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - Indexer",
+            "request": "launch",
+            "mainClass": "com.mycompany.luceneexam.Indexer",
+            "projectName": "LuceneExam",
+        }
+    ]
+}

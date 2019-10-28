@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.gosen.GosenAnalyzer;
@@ -22,8 +21,10 @@ public class Indexer {
 
     public static void main(String[] args) {
         try {
+            File home = new File(System.getProperty("user.home"));
+
             // インデックスの出力先を定義
-            Directory indexDir = FSDirectory.open(new File("~/Documents/index").toPath());
+            Directory indexDir = FSDirectory.open(new File(home, "Documents/index").toPath());
             // テキストの解析方法（アナライザー）を定義
             //Analyzer analyzer = new StandardAnalyzer(); // 英語用
             Analyzer analyzer = new GosenAnalyzer();
@@ -32,7 +33,7 @@ public class Indexer {
             // インデックスが既に存在する場合の動作を定義する（OpenMode.CREATE の場合、新規に作成して上書きする）
             config.setOpenMode(OpenMode.CREATE);
             try (IndexWriter writer = new IndexWriter(indexDir, config)) {
-                File root = new File("~/Documents/novels");
+                File root = new File(home, "Documents/novels");
                 gatherDocs(writer, root);
             }
         } catch (IOException e) {
@@ -41,6 +42,7 @@ public class Indexer {
     }
 
     private static void gatherDocs(IndexWriter writer, File parent) throws IOException {
+        System.out.println(parent.getAbsolutePath());
         for (File child : parent.listFiles()) {
             if (child.isDirectory()) {
                 gatherDocs(writer, child);
@@ -51,7 +53,8 @@ public class Indexer {
             if (name.startsWith(".")) {
                 continue;
             }
-            if (name.endsWith("txt")) {                
+            if (name.endsWith("txt")) {  
+                System.out.format("FILE:%s\n", name);
                 try (BufferedReader br = Files.newBufferedReader(child.toPath(), Charset.forName("Windows-31J"))) {
                     
                     String title = br.readLine();
@@ -67,6 +70,8 @@ public class Indexer {
 
                     // インデックスを書き出す
                     writer.addDocument(doc);
+                } catch(java.lang.Exception e) {
+                    System.out.println("読み込み失敗");
                 }
             }
         }

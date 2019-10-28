@@ -20,6 +20,8 @@ public class Searcher {
 
     public static void main(String[] args) throws IOException, ParseException {
         try {
+	    File home = new File(System.getProperty("user.home"));
+
             // テキストの解析方法（アナライザー）を定義
             //Analyzer analyzer = new StandardAnalyzer(); // 英語用
             Analyzer analyzer = new GosenAnalyzer();
@@ -31,7 +33,7 @@ public class Searcher {
             Query query = parser.parse(searchText);
 
             // 検索で使用する IndexSearcher を生成する
-            Directory indexDir = FSDirectory.open(new File("~/Documents/index").toPath());
+            Directory indexDir = FSDirectory.open(new File(home, "Documents/index").toPath());
             IndexReader indexReader = DirectoryReader.open(indexDir);
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 
@@ -45,7 +47,7 @@ public class Searcher {
                 // Document の path を取得して出力する
                 String author = doc.get("author");
                 String title = doc.get("title");
-                System.out.format("%s, %s\n", author, title);
+                System.out.format("%s, %s, %f\n", author, title, scoreDoc.score);
             }
         } catch (Exception e) {
             e.printStackTrace();
